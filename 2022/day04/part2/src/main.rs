@@ -10,16 +10,11 @@ fn main() -> io::Result<()> {
 		.lines()
 		// reader.lines()
 		.map(|line| line.unwrap())
-		// split line into two ranges
+		// split line and convert into ranges
 		.map(|line| {
 			let (s1, s2) = line.split_once(',').unwrap();
-			(s1.to_string(), s2.to_string())
-		})
-		// convert strings to ranges
-		.map(|(s1, s2)| {
-			let str2range = |s: String| {
+			let str2range = |s: &str| {
 				let (start, end) = s.split_once('-').unwrap();
-				// start.parse::<u32>().unwrap()..(end.parse::<u32>().unwrap()+1)
 				start.parse::<u32>().unwrap()..=end.parse::<u32>().unwrap()
 			};
 			(str2range(s1), str2range(s2))
