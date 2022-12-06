@@ -1,8 +1,8 @@
-# [Advent of Code](https://adventofcode.com/)
+# My [advent of Code](https://adventofcode.com/) solutions in Rust
 
 ## 2022
 
-Here are some things I have learned about Rust through solving the Advent of code puzzles.
+Here are some (quite random) things I have learned about Rust through solving the Advent of code puzzles.
 
 Feature/function | Day/file | Description
 :-- | :-- | :--
