@@ -8,8 +8,9 @@ fn main() -> io::Result<()> {
 	let index = input
 		.chars()
 		.collect::<Vec<char>>()
-		// e.g. [a,b,c].iter().windows(2) -> [[a,b], [b,c]].iter()
+		// e.g. [a,b,c].windows(2) -> [[a,b], [b,c]]
 		.windows(14)
+		.inspect(|v| { dbg!(v); })
 		// .inspect(|v| {
 		// 	dbg!(v);
 		// })
