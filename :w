@@ -1,0 +1,25 @@
+use std::fs::read_to_string;
+use std::io;
+use std::collections::BTreeSet;
+
+fn main() -> io::Result<()> {
+	let input = read_to_string("../puzzle_input.txt")?;
+
+	let chars: Vec<char> = input.chars().collect();
+	let index = chars
+		// e.g. windows(2): split [a,b,c] into iter over [a,b], [b,c]
+		.windows(4)
+		.position(|four| {
+			// if four contains duplicates, no_duplicates will contain less elements than four
+			let no_duplicates: BTreeSet<&char> = four.iter().collect();
+			four.len() == no_duplicates.len()
+		})
+		.unwrap();
+
+	// starts at 1, get back of four slice
+	let count = index + 4;
+
+	println!("total points: {}", count);
+
+	Ok(())
+}
