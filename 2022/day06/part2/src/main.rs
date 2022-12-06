@@ -10,6 +10,9 @@ fn main() -> io::Result<()> {
 		.collect::<Vec<char>>()
 		// e.g. [a,b,c].iter().windows(2) -> [[a,b], [b,c]].iter()
 		.windows(14)
+		// .inspect(|v| {
+		// 	dbg!(v);
+		// })
 		.position(|slice| {
 			// if slice contains duplicates, no_duplicates will contain less elements than slice
 			let no_duplicates: BTreeSet<&char> = slice.iter().collect();
