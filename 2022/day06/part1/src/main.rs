@@ -13,7 +13,7 @@ fn main() -> io::Result<()> {
 		.windows(4)
 		.position(|four| {
 			// let (_, duplicated) = four.partition_dedup();
-			// !duplicated.is_empty()
+			// duplicated.is_empty()
 
 			// if four contains duplicates, no_duplicates will contain less elements than four
 			let no_duplicates: BTreeSet<&char> = four.iter().collect();
