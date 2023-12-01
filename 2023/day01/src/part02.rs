@@ -1,7 +1,5 @@
 use derive_more::Into;
 use parse_display::FromStr;
-use std::fs::File;
-use std::io::{prelude::*, BufReader};
 use std::str::FromStr;
 
 /// A digit that can be parsed from both a `SpelledOutDigit` and a `char`.
@@ -118,18 +116,12 @@ impl FromStr for CalibrationValue {
     }
 }
 
-fn main() -> anyhow::Result<()> {
-    let file = File::open("../puzzle_input.txt")?;
-    let reader = BufReader::new(file);
-
-    let calibration_values_sum: u32 = reader
+pub fn solve(puzzle_input: &str) -> anyhow::Result<String> {
+    let calibration_values_sum: u32 = puzzle_input
         .lines()
-        // TODO: remove unwrap, handle errors more nicely
-        .map(|line| line.unwrap())
         .map(|line| line.parse::<CalibrationValue>().unwrap())
         .map(u32::from)
         .sum();
 
-    println!("sum of calibration values: {}", calibration_values_sum);
-    Ok(())
+    Ok(calibration_values_sum.to_string())
 }
