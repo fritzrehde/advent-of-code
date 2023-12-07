@@ -35,6 +35,7 @@ impl Races {
         let (input, times) = numbers_parser(input)?;
         let (input, _) = newline(input)?;
         let (input, _) = tag("Distance:")(input)?;
+        let (input, _) = multispace1(input)?;
         let (input, distances) = numbers_parser(input)?;
 
         if times.len() != distances.len() {
@@ -56,7 +57,7 @@ impl str::FromStr for Races {
     type Err = NomError<String>;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match Self::parse(s).finish() {
-            Ok((_remaining, scatchcard)) => Ok(scatchcard),
+            Ok((_remaining, races)) => Ok(races),
             Err(NomError { input, code }) => Err(NomError {
                 input: input.to_string(),
                 code,
@@ -113,9 +114,7 @@ impl Race {
 /// millimeter per millisecond.
 #[derive(new)]
 struct PossibleRace {
-    // holding_time: usize,
     holding_time: usize,
-    // total_race_time: usize,
     total_race_time: usize,
 }
 
