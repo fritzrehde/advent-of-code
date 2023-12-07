@@ -132,7 +132,7 @@ impl PossibleRace {
 }
 
 pub fn solve(puzzle_input: &str) -> anyhow::Result<String> {
-    let races: Race = puzzle_input.parse()?;
-    let record_beating_possibilities: usize = races.record_beating_possibilities();
+    let race: Race = puzzle_input.parse()?;
+    let record_beating_possibilities: usize = race.record_beating_possibilities();
     Ok(record_beating_possibilities.to_string())
 }
