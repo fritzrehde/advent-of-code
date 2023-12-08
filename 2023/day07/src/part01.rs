@@ -13,8 +13,8 @@ use parse_display::FromStr;
 use std::collections::HashMap;
 use std::str;
 
-#[derive(Derivative, Debug, FromStr, Eq, Ord)]
-#[derivative(PartialEq, PartialOrd)]
+#[derive(Derivative, Debug, FromStr)]
+#[derivative(PartialEq, Eq, PartialOrd, Ord)]
 #[display("{hand} {bid}")]
 struct HandWithBid {
     hand: Hand,
@@ -116,7 +116,7 @@ impl From<&Cards> for HandType {
         let two_pair = || card_counts.values().filter(|&count| *count == 2).count() == 2;
         let one_pair = || card_counts.values().filter(|&count| *count == 2).count() == 1;
 
-        return if five_of_a_kind() {
+        if five_of_a_kind() {
             HandType::FiveOfAKind
         } else if four_of_a_kind() {
             HandType::FourOfAKind
@@ -130,7 +130,7 @@ impl From<&Cards> for HandType {
             HandType::OnePair
         } else {
             HandType::HighCard
-        };
+        }
     }
 }
 
