@@ -36,22 +36,23 @@ impl History {
         // Extrapolate from the bottom-up.
 
         // Generate base-case:
-        // n-1: A   B
-        // n:     0
+        // n-1: ... A   B   C
+        // n:     ... 0   0   0
         // Start by adding a new zero to the end of your list of zeroes.
         histories.last_mut().0.push(0);
 
         // TODO: switch to leading_iterator::windows_mut once it supports .rev()
 
         // Iterate over histories from the bottom-up.
+
         // NOTE: Unfortunately, traditional Rust iterators do not support
         // creating windows over mutable references, so we use a dedicated
         // crate for that.
         let mut histories_windows = windows_mut(&mut histories, 2).rev();
         while let Some([top, bottom]) = histories_windows.next_mut() {
-            // Generate next value `B` from existing values `C` and `A`.
-            // i-1  (top):  A   B
-            // i (bottom):    C
+            // Generate new value `B` from existing values `C` and `A`.
+            // i-1  (top): ... A   B
+            // i (bottom):   ... C
             // where B = C + A
 
             // TODO: remove unwraps
@@ -68,16 +69,10 @@ impl History {
 
         // let n = histories.len();
         // for i in (1..n).rev() {
-        //     // Generate next value `B` from existing values `C` and `A`.
-        //     // i-1: A   B
-        //     // i:     C
-        //     // where B = C + A
-
         //     let c = histories[i].0.last().unwrap();
         //     let a = histories[i - 1].0.last().unwrap();
         //     let b = c + a;
-
-        //     // Insert B.
+        //
         //     histories[i - 1].0.push(b);
         // }
 
