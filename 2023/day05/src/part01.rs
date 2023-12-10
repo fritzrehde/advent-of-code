@@ -138,8 +138,7 @@ impl MapRange {
     fn get(&self, src: &Src) -> Option<Dst> {
         self.src_range.contains(src).then(|| {
             let idx_into_src_range = src - self.src_range.start;
-            let dst = self.dst_first + idx_into_src_range;
-            dst
+            self.dst_first + idx_into_src_range
         })
     }
 }
