@@ -129,6 +129,8 @@ fn test_is_mirror() {
     assert_eq!(4, grid.find_mirror().index);
 }
 
+// TODO: if the `grid` crate implements Clone on its iterator type, there is no need to use this work-around with passing closures
+
 /// Check whether this row (i.e. column iterator) contains a mirror at the
 /// specified column index.
 fn is_mirror<'a, F, I>(get_col_iter: F, mirror_col_idx: usize) -> bool
