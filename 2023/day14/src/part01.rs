@@ -5,7 +5,7 @@ use parse_display::{Display, FromStr};
 use std::{fmt, str};
 use strum::EnumIs;
 
-/// A platform with a control panel with which it can be tiltet in four
+/// A platform with a control panel with which it can be tilted in four
 /// directions.
 #[derive(Debug)]
 struct PlatformGrid(Grid<MaterialInGrid>);
