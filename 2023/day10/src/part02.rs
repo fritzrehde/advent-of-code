@@ -1,5 +1,4 @@
 use anyhow::bail;
-use derive_new::new;
 use ndarray::Array2;
 use parse_display::FromStr;
 use std::{cmp::Ordering, str};
@@ -30,16 +29,44 @@ impl str::FromStr for TileGrid {
             .collect();
 
         let grid = Array2::from_shape_vec((rows, cols), grid_vec)?;
-        Ok(Self(grid))
+        Ok(Self(grid).setup_starting_tile())
     }
 }
 
+// impl fmt::Display for TileGrid {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         for row in self.0.rows() {
+//             for tile in row {
+//                 write!(f, "{}", tile)?;
+//             }
+//         }
+//         todo!()
+//     }
+// }
+
 impl TileGrid {
+    /// Replace the starting tile, which is initially `S`, with the pipe tile it
+    /// represents in order to connect to its two neighboring pipes.
+    fn setup_starting_tile(mut self) -> Self {
+        let ((_, initial_dir_a), (_, initial_dir_b)) = self.find_initial_connected_pipes();
+
+        let starting_tile = self
+            .0
+            .iter_mut()
+            .find(|tile| tile.is_starting_tile || matches!(tile.tile, Tile::AnimalStartingPosition))
+            .expect("there must be a starting tile");
+
+        starting_tile.tile = Tile::Pipe(Pipe(initial_dir_a, initial_dir_b));
+        starting_tile.is_starting_tile = true;
+
+        self
+    }
+
     /// Get the starting tile.
     fn get_starting_tile(&self) -> &TileInGrid {
         self.0
             .iter()
-            .find(|tile| matches!(tile.tile, Tile::AnimalStartingPosition))
+            .find(|tile| tile.is_starting_tile || matches!(tile.tile, Tile::AnimalStartingPosition))
             .expect("there must be a starting tile")
     }
 
@@ -49,9 +76,10 @@ impl TileGrid {
     fn find_main_loop(&self) -> Vec<&TileInGrid> {
         let starting_tile = self.get_starting_tile();
 
-        let (initial_pipe, initial_dir) = self.find_initial_connected_pipes(starting_tile);
+        // TODO: we're calling find_initial_connected_pipes here again for a second time, unnecessary (but did it for borrow checking reasons)
+        let ((initial_pipe, initial_dir), (_, _)) = self.find_initial_connected_pipes();
 
-        // TODO: try using maybe fold for more idiomatic rust, also vec1 for nice .last()
+        // TODO: try using maybe fold for more idiomatic rust
 
         let mut main_loop_tiles = vec![starting_tile];
 
@@ -69,10 +97,9 @@ impl TileGrid {
     /// Find one of the pipes connected to the starting tile. Return the
     /// direction in which it was found, relative to the starting pipe, along
     /// with the connected pipe tile itself.
-    fn find_initial_connected_pipes<'a>(
-        &'a self,
-        starting_tile: &TileInGrid,
-    ) -> (&'a TileInGrid, Direction) {
+    fn find_initial_connected_pipes(&self) -> ((&TileInGrid, Direction), (&TileInGrid, Direction)) {
+        let starting_tile = self.get_starting_tile();
+
         // Search every direction for connected pipes.
         let mut initial_pipes: Vec<(&TileInGrid, Direction)> = Direction::iter()
             .filter_map(|direction| {
@@ -87,22 +114,60 @@ impl TileGrid {
             .collect();
 
         // It doesn't matter which of the two initial pipes we choose to traverse.
-        let (Some((initial_pipe, initial_dir)), Some(_)) =
+        let (Some((initial_pipe_a, initial_dir_a)), Some((initial_pipe_b, initial_dir_b))) =
             (initial_pipes.pop(), initial_pipes.pop())
         else {
             panic!("expected there to be exactly two pipes connected to the starting tile");
         };
 
-        (initial_pipe, initial_dir)
+        (
+            (initial_pipe_a, initial_dir_a),
+            (initial_pipe_b, initial_dir_b),
+        )
+    }
+
+    fn find_top_left_corner(&self) -> &TileInGrid {
+        let is_left_corner = |tile: &Tile| {
+            tile.points_in_direction(&Direction::South)
+                && tile.points_in_direction(&Direction::East)
+        };
+
+        let row_idx = 0;
+        let col_idx = 0;
+
+        loop {
+            if let Some(maybe_left_corner) = self.0.get((row_idx, col_idx)) {
+                if is_left_corner(&maybe_left_corner.tile) {
+                    //
+                    return maybe_left_corner;
+                }
+
+                //
+            }
+        }
+        todo!()
+    }
+
+    fn add_inside_direction_to_main_loop_tiles(&mut self) {
+        todo!()
+    }
+
+    fn find_area_enclosed_by_main_loop(&self) -> usize {
+        todo!()
     }
 }
 
 /// An index into a `ndarray::Array2`.
 type Array2Index = usize;
 
-#[derive(Debug, new, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 struct TileInGrid {
     tile: Tile,
+    is_starting_tile: bool,
+    // TODO: maybe fix with type system to make clearer
+    /// If we are standing on this tile, in which direction is the inside of
+    /// the area enclosed by the main loop?
+    inside_enclosed_direction: Option<Direction>,
     row: Array2Index,
     col: Array2Index,
 }
@@ -118,6 +183,17 @@ enum PositionRelation {
 }
 
 impl TileInGrid {
+    fn new(tile: Tile, row: Array2Index, col: Array2Index) -> Self {
+        Self {
+            tile,
+            is_starting_tile: false,
+            // We choose any random direction here, this field should only be used once
+            inside_enclosed_direction: None,
+            row,
+            col,
+        }
+    }
+
     /// Find the positional relation between the two tiles `self` and `other`.
     fn get_relation_to(&self, other: &Self) -> PositionRelation {
         match self.row.cmp(&other.row) {
@@ -248,7 +324,7 @@ impl TileInGrid {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 enum Tile {
     Pipe(Pipe),
     Ground,
@@ -282,10 +358,10 @@ impl Tile {
 }
 
 /// A pipe that connects two `Direction`s.
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 struct Pipe(Direction, Direction);
 
-#[derive(Debug, PartialEq, Eq, EnumIter)]
+#[derive(Debug, PartialEq, Eq, EnumIter, Clone)]
 enum Direction {
     North,
     East,
@@ -360,6 +436,8 @@ fn round_up_div(dividend: usize, divisor: usize) -> usize {
 /// Solve the problem and return the solution as a `String`.
 pub fn solve(puzzle_input: &str) -> anyhow::Result<String> {
     let tile_grid: TileGrid = puzzle_input.parse()?;
+
+    dbg!(&tile_grid);
 
     let main_loop_tiles = tile_grid.find_main_loop();
 

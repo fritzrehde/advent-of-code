@@ -20,11 +20,11 @@ struct DamagedSpringGroups(Vec<DamagedSpringGroup>);
 impl str::FromStr for DamagedSpringGroups {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let springs = s
+        let groups = s
             .split(',')
             .map(|c| c.parse::<DamagedSpringGroup>())
             .collect::<Result<_, _>>()?;
-        Ok(Self(springs))
+        Ok(Self(groups))
     }
 }
 
@@ -40,7 +40,7 @@ impl Springs {
         let damaged_spring_groups_iter = self
             .0
             .iter()
-            // Group by being bool `Spring::is_damaged`:
+            // Group by predicate `Spring::is_damaged`:
             // e.g. ###..## => [(damaged, count == 3), (not_damaged, count == 2), (damaged, count == 2))]
             .group_by(|spring| spring.is_damaged())
             .into_iter()
