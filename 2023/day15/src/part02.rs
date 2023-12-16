@@ -45,7 +45,7 @@ impl Boxes {
     /// Insert a new lens.
     fn insert(&mut self, lens: Lens) {
         if let Some(lens_box) = self.0.get_mut(lens.label.box_index()) {
-            // Find the existing lens with the same label as.
+            // Find an existing lens with the same label as new lens.
             let existing_lens = lens_box
                 .0
                 .iter_mut()
@@ -108,6 +108,7 @@ struct FocalLength(usize);
 #[derive(Debug)]
 struct LensOperations(Vec<LensOperation>);
 
+// TODO: parse_display should be able to automate this in the future
 impl str::FromStr for LensOperations {
     type Err = anyhow::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
