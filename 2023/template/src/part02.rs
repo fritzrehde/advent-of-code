@@ -7,12 +7,13 @@ pub fn solve(puzzle_input: &str) -> anyhow::Result<String> {
 pub mod example {
     use indoc::indoc;
 
-    /// Provide the example details as `(puzzle input, expected solution)`.
-    pub fn example_details() -> (&'static str, String) {
+    /// Provide multiple example details as `[(puzzle input, expected solution)]`.
+    pub fn example_details() -> impl Iterator<Item = (&'static str, String)> {
         let puzzle_input = indoc! {"
             puzzle input lines
         "};
         let expected_solution = 42;
-        (puzzle_input, expected_solution.to_string())
+
+        [(puzzle_input, expected_solution.to_string())].into_iter()
     }
 }
