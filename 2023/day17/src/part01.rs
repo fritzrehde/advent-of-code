@@ -82,7 +82,7 @@ impl CityBlockGrid {
     ) -> Option<(Vec<Crucible>, HeatLoss)> {
         // The crucible could be facing any direction when starting.
         let all_possible_starting_crucibles = Direction::iter()
-            .map(|dir| Crucible::new(start.position, dir, 1, start.city_block.heat_loss));
+            .map(|dir| Crucible::new(start.position, dir, 0, start.city_block.heat_loss));
 
         all_possible_starting_crucibles
             .into_iter()
@@ -269,7 +269,7 @@ pub mod example {
     use indoc::indoc;
 
     /// Provide the example details as `(puzzle input, expected solution)`.
-    pub fn example_details() -> (&'static str, String) {
+    pub fn example_details() -> impl Iterator<Item = (&'static str, String)> {
         let puzzle_input = indoc! {"
             2413432311323
             3215453535623
@@ -302,6 +302,7 @@ pub mod example {
         // 43226746555v>
 
         let expected_solution = 102;
-        (puzzle_input, expected_solution.to_string())
+
+        [(puzzle_input, expected_solution.to_string())].into_iter()
     }
 }
