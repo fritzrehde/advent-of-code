@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from collections import deque
 import itertools
 from puzzle_utils import puzzle, run
@@ -55,8 +53,6 @@ def solve_custom_sliding_window_iterable(puzzle_input: str) -> str:
     return str(count_increases(sums))
 
 
-# Alternative solution using more_itertools's sliding window instead of
-# implementing my own.
 @puzzle
 def solve_moreitertools_sliding_window(puzzle_input: str) -> str:
     def count_increases(iterable) -> int:

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from puzzle_utils import puzzle, run
 
 
