@@ -5,52 +5,51 @@ import sys
 import re
 
 
-def codegen_fn(fn_name, fn, globals_scope):
-    """Put a function in the global namespace of the module this method was called from."""
-    globals_scope[fn_name] = fn
-
-
-def codegen_test_fn(
-    id, puzzle_input, expected_output, solve_func, globals_scope
-):
-    # Generate a test function.
-    def test():
-        observed_output = solve_func(puzzle_input)
-        assert expected_output == observed_output
-
-    codegen_fn(f"test_{id}" if id != "" else "test", test, globals_scope)
-
-
 def puzzle(solve_func):
     @wraps(solve_func)
     def wrapper(puzzle_input):
         return solve_func(puzzle_input)
 
+    caller_name = solve_func.__name__
     caller_frame = inspect.stack()[1]
+
     solve_file_path = caller_frame.filename
     globals_scope = caller_frame.frame.f_globals
+    test_fn_prefix = caller_name
+
+    def codegen_test_fn(id, puzzle_input, expected_output):
+        # Generate a test function.
+        def test(benchmark):
+            observed_output = benchmark(solve_func, puzzle_input)
+            assert expected_output == observed_output
+
+        test_fn_name = (
+            f"test_{id}" if id != "" else "test"
+        ) + f"_{test_fn_prefix}"
+        codegen_fn(test_fn_name, test, globals_scope)
 
     # Generate the main test function.
     puzzle_input = get_main_puzzle_input(solve_file_path)
     expected_output = get_main_expected_output(solve_file_path)
-    codegen_test_fn(
-        "", puzzle_input, expected_output, solve_func, globals_scope
-    )
+    codegen_test_fn("", puzzle_input, expected_output)
 
     # Generate the additional example test functions.
     for id, puzzle_input, expected_output in get_example_tests(solve_file_path):
-        print(id)
-        codegen_test_fn(
-            id, puzzle_input, expected_output, solve_func, globals_scope
-        )
+        codegen_test_fn(id, puzzle_input, expected_output)
 
     # TODO: would be cool to be able to also generate the main() here as well, to reduce boilerplate.
 
     return wrapper
 
 
+def codegen_fn(fn_name, fn, globals_scope):
+    """Put a function in the global namespace of the module this method was called from."""
+    globals_scope[fn_name] = fn
+
+
 def run(solve_func):
-    solve_file_path = inspect.stack()[1].filename
+    caller_frame = inspect.stack()[1]
+    solve_file_path = caller_frame.filename
     puzzle_input = get_main_puzzle_input(solve_file_path)
     result = solve_func(puzzle_input)
     print(result)

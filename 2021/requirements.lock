@@ -10,3 +10,5 @@
 #   universal: false
 
 -e file:.
+more-itertools==10.4.0
+    # via aoc2021
