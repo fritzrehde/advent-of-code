@@ -1,8 +1,17 @@
-# My [Advent of Code](https://adventofcode.com/) solutions in Rust
+# My [Advent of Code](https://adventofcode.com/) solutions
 
-## 2022
+AoC year | Language | Year completed
+:-- | :-- | :--
+2021 | Python | 2024
+2022 | Rust | 2022
+2023 | Rust | 2023
+2024 | Python | 2024
 
-Here are some (quite random) things I have learned about Rust through solving the Advent of Code puzzles.
+## Notes
+
+### 2022
+
+Here are some (quite random) things I have learned about Rust through solving the 2022 Advent of Code puzzles.
 
 Feature/function | Day | Description
 :-- | :-- | :--
