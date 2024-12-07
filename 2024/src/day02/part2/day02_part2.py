@@ -28,7 +28,7 @@ def solve(puzzle_input: str) -> str:
             return copy
 
         n = len(levels)
-        return any(map(safe, map(rm_idx, range(0, n))))
+        return safe(levels) or any(map(safe, map(rm_idx, range(0, n))))
 
     def count(iterable):
         return sum(1 for _ in iterable)
