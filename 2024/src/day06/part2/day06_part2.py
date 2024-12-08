@@ -80,13 +80,6 @@ def solve(puzzle_input: str) -> str:
                 # Out of bounds: we've escaped grid without encountering cycle.
                 return False
 
-    def dbg_grid(rows, file=sys.stderr):
-        for row in rows:
-            for e in row:
-                print(e, end="", file=file)
-            print(file=file)
-        print(file=file)
-
     obstacles = set()
     for r, c in all_coords(rows):
         is_starting_cell = (r, c) == (start_r, start_c)
@@ -101,11 +94,6 @@ def solve(puzzle_input: str) -> str:
 
         # Restore cell.
         rows[r][c] = cell
-
-    for r, c in obstacles:
-        rows[r][c] = "O"
-
-    dbg_grid(rows)
 
     res = len(obstacles)
 
