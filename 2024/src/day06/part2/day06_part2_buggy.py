@@ -52,7 +52,7 @@ def solve(puzzle_input: str) -> str:
             start_r = r
             start_c = c
 
-    visited_cells = set()
+    visited_states = set()
 
     def search_visited_obstacle_right(start_r, start_c, start_dir) -> bool:
         r, c, dir = start_r, start_c, turn_right(start_dir)
@@ -74,7 +74,9 @@ def solve(puzzle_input: str) -> str:
                 is_starting_cell = r == start_r and c == start_c
                 # This the first obstacle in line of sight, don't visit any
                 # more afterwards.
-                return (not is_starting_cell) and (r, c) in visited_cells
+                # TODO: I think I'd need to check other reachable directions too
+                # (see example test case 3).
+                return (not is_starting_cell) and (r, c, dir) in visited_states
             r, c = next_r, next_c
         return False
 
@@ -82,7 +84,7 @@ def solve(puzzle_input: str) -> str:
 
     r, c, dir = start_r, start_c, start_dir
     while True:
-        visited_cells.add((r, c))
+        visited_states.add((r, c, dir))
 
         if search_visited_obstacle_right(r, c, dir):
             # Place an obstacle in-front of us, so we're forced to go right,
