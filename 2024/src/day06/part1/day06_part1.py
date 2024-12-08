@@ -40,7 +40,7 @@ def solve(puzzle_input: str) -> str:
     dirs = list(dir_drow_dcol.keys())
     dir_to_idx = {dir: i for i, dir in enumerate(dirs)}
 
-    def go_right(dir: str) -> str:
+    def turn_right(dir: str) -> str:
         i = dir_to_idx[dir]
         return dirs[(i + 1) % len(dirs)]
 
@@ -63,9 +63,10 @@ def solve(puzzle_input: str) -> str:
         if (next_r_c := steps_in_dir(r, c, *dir_drow_dcol[dir], 1)) is not None:
             next_r, next_c = next_r_c
             if rows[next_r][next_c] == "#":
-                dir = go_right(dir)
+                dir = turn_right(dir)
                 # NOTE: We don't do a step here, so we're in the same cell again
-                # next iteration facing a different direction.
+                # next iteration facing a different direction. It's fine to add
+                # this cell to the set twice.
             else:
                 r, c = next_r, next_c
         else:
