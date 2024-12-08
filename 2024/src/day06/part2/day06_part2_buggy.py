@@ -63,10 +63,6 @@ def solve(puzzle_input: str) -> str:
         ][next_r_c[1]] == "#":
             dir = turn_right(dir)
 
-        if dir == start_dir:
-            # We turned right 3 times, returning us to our original facing dir.
-            return True
-
         # Anytime we visit a cell, we need to check to our right whether there
         # is an obstacle in line of sight that we have already "bumped" into
         # (i.e. visited the cell right before the obstacle).
