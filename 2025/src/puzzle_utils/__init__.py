@@ -109,3 +109,25 @@ def get_example_tests(solve_file_path: str):
                 file=sys.stderr,
             )
             exit(1)
+
+
+import inspect
+
+def dbg(*args):
+    frame = inspect.currentframe().f_back
+    code = frame.f_code
+    call_line = inspect.getframeinfo(frame).code_context[0]
+
+    # Extract the text inside dbg(...)
+    start = call_line.find('dbg(') + 4
+    end = call_line.rfind(')')
+    arg_text = call_line[start:end]
+
+    names = [a.strip() for a in arg_text.split(',')]
+
+    parts = []
+    for name, val in zip(names, args):
+        parts.append(f"{name} = {val!r}")
+
+    print(", ".join(parts))
+    return args if len(args) > 1 else args[0]
