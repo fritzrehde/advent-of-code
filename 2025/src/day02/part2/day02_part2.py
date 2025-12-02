@@ -1,10 +1,6 @@
 from puzzle_utils import puzzle, run, dbg
 
 
-def digits(i: int) -> int:
-    return len(str(i))
-
-
 @puzzle
 def solve(puzzle_input: str) -> str:
 
