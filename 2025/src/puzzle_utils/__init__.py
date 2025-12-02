@@ -19,8 +19,8 @@ def puzzle(solve_func):
 
     def codegen_test_fn(id, puzzle_input, expected_output):
         # Generate a test function.
-        def test(benchmark):
-            observed_output = benchmark(solve_func, puzzle_input)
+        def test():
+            observed_output = solve_func(puzzle_input)
             assert expected_output == observed_output
 
         test_fn_name = (
