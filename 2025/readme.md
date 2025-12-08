@@ -13,4 +13,8 @@ Run tests for a specific day with:
 ```sh
 # cd to 2025 dir
 uv run -- pytest src/dayXX
+
+# or
+cd 2025/src/dayXX
+uv run -- pytest
 ```
