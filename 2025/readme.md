@@ -18,3 +18,8 @@ uv run -- pytest src/dayXX
 cd 2025/src/dayXX
 uv run -- pytest
 ```
+
+Run tests where `NAME` is a substring of test name:
+```sh
+uv run -- pytest src/dayXX -k test_01
+```
